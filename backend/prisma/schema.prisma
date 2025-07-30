@@ -1,0 +1,49 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  name      String?
+  email     String     @unique
+  password  String
+  role      Role       @default(USER)
+  status    UserStatus @default(ACTIVE) // NEW: Xaaladda user-ka (ACTIVE, BLOCKED, PENDING_ADMIN_APPROVAL)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum UserStatus { // NEW: Enum cusub oo loogu talagalay xaaladda user-ka
+  ACTIVE
+  BLOCKED
+  PENDING_ADMIN_APPROVAL // User-ka iska diiwaangeliyay ADMIN laakin aan weli la ogolaan
+  REJECTED // Haddii codsiga admin-ka la diido
+}
+
+model Book {
+  id               String    @id @default(uuid())
+  title            String
+  author           String
+  description      String
+  cover_image_url  String
+  file_url         String?
+  price            Int
+  is_premium       Boolean   @default(false)
+  category         String
+  pages            Int
+  isbn             String?   @unique
+  publication_date String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
